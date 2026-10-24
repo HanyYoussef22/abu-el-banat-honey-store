@@ -45,7 +45,8 @@ test("honey hero carousel uses wide assets accessibly and keeps sheet cover over
   assert.match(ui, /aria-label="الصورة التالية"/);
   assert.match(ui, /banner-brand-logo\.png/);
   assert.match(ui, /className="hero-brand-watermark"/);
-  assert.match(ui, /owner-profile-card\.png/);
+  assert.match(ui, /wael-selim-owner\.webp/);
+  assert.match(ui, /className="owner-portrait-card"/);
   assert.match(ui, /className="owner-qualification"/);
   assert.match(css, /object-fit:cover/);
   assert.match(css, /\.hero-carousel \.hero-inner:before/);

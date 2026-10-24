@@ -255,6 +255,15 @@
 @media(max-width:700px){.owner-profile{width:min(100%,360px)}.story-art{min-height:0;height:auto}.story .owner-qualification{font-size:12px;padding:11px 14px}}
 @media(max-width:420px){.owner-profile{width:min(100%,320px)}.story-art{min-height:0;height:auto}}
 .hero-brand-watermark{position:absolute;z-index:3;top:20px;left:20px;width:74px;height:74px;object-fit:cover;object-position:center;border:3px solid #fffaf0;border-radius:50%;background:#fffaf0;box-shadow:0 5px 20px #2b1b1659;pointer-events:none}
+.owner-portrait-card{position:relative;width:100%;aspect-ratio:1.18;overflow:visible;border:8px solid #fffaf0;border-radius:185px 185px 22px 22px;background:#fffaf0;box-shadow:0 12px 32px #5c391a1f}
+.owner-portrait-card img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 43%;border-radius:178px 178px 15px 15px}
+.owner-experience{position:absolute;top:9%;right:-5%;width:76px;height:76px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid #e8cb91;border-radius:50%;background:#fffaf0;color:#70401f;box-shadow:0 5px 15px #46301626}
+.owner-experience strong{font-size:27px;line-height:1}
+.owner-experience small{font-size:11px;font-weight:800}
+.owner-portrait-caption{box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:15px;width:100%;padding:12px 20px;border:1px solid #e8d8bd;border-radius:14px;background:#fffdf7;color:#5b2d20;font-size:16px}
+.owner-portrait-caption strong{font-size:18px}
+.owner-portrait-caption span{color:#9a6934;font-size:14px;font-weight:800}
+@media(max-width:700px){.owner-portrait-card{border-width:6px}.owner-experience{width:64px;height:64px;right:-2%}.owner-experience strong{font-size:23px}.owner-experience small{font-size:10px}.owner-portrait-caption{padding:10px 15px}}
 @media(max-width:700px){.hero-brand-watermark{top:12px;left:auto;right:12px;width:52px;height:52px;border-width:2px}}
 .category-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
 .category-tile{min-height:128px;padding:18px 14px;border-radius:16px}

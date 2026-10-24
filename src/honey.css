@@ -186,6 +186,26 @@
 .hero-jar-brand strong{font-size:clamp(15px,2vw,30px);color:#fff5d8}
 @media(max-width:700px){.hero-jar-brand{left:18%;top:42%;width:29%;gap:3px}.hero-jar-brand span{font-size:11px}.hero-jar-brand strong{font-size:15px}}
 .empty-results a{display:inline-block;margin-inline-start:8px;color:#955d19;font-weight:800;text-decoration:underline}
+.manager-card{grid-template-columns:34% minmax(0,1fr);min-height:350px;background:linear-gradient(115deg,#fffaf3,#f8eee2);border:1px solid #ecd8bb;box-shadow:0 16px 45px #56371b10}
+.manager-card>img{min-height:350px;object-position:center 35%}
+.manager-card-copy{align-items:stretch;padding:32px clamp(24px,4vw,62px)}
+.manager-card-copy .eyebrow{font-size:13px;letter-spacing:.01em}
+.manager-card-copy h2{margin:8px 0 1px;font-size:clamp(30px,3vw,46px)}
+.manager-card-copy .manager-role{font-size:14px;color:#80542e}
+.manager-card-copy p{max-width:740px;margin:13px 0 21px;font-size:clamp(14px,1.2vw,17px);line-height:1.8;color:#684f3d}
+.manager-contact-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;gap:12px;margin:0;width:100%;max-width:730px}
+.manager-card-copy .manager-contact{white-space:normal;max-width:none;min-width:0;min-height:75px;display:flex;justify-content:flex-start;gap:12px;border-radius:12px;padding:11px 14px;text-align:right;line-height:1.2;transition:transform .2s,box-shadow .2s,background .2s}
+.manager-contact:hover{transform:translateY(-2px);box-shadow:0 8px 16px #234c2b23}
+.manager-card-copy .manager-contact-primary{background:#217b51;color:#fff}
+.manager-card-copy .manager-contact-secondary{background:#fff;border:1px solid #d8c49d;color:#4d321e}
+.manager-card-copy .manager-contact-secondary:hover{background:#fff7e8}
+.manager-contact-icon{flex:0 0 39px;width:39px;height:39px;display:grid;place-items:center;border-radius:50%;background:#ffffff24}
+.manager-contact-secondary .manager-contact-icon{background:#e8f2e9;color:#217b51}
+.manager-contact-copy{display:flex;flex:1;min-width:0;flex-direction:column;align-items:flex-start;gap:5px;font-size:12px}
+.manager-contact-copy bdi{font-family:Arial,sans-serif;font-size:17px;font-weight:800;letter-spacing:.025em;white-space:nowrap;unicode-bidi:isolate}
+.manager-contact>svg:last-child{flex:none;opacity:.75}
+@media(max-width:900px){.manager-card{grid-template-columns:38% minmax(0,1fr)}.manager-contact-links{grid-template-columns:1fr}.manager-card-copy .manager-contact{min-height:66px}}
+@media(max-width:700px){.manager-card{display:flex;flex-direction:column;min-height:0}.manager-card>img{width:100%;height:255px;min-height:0;object-position:center 31%}.manager-card-copy{padding:24px 20px 26px}.manager-card-copy h2{font-size:30px}.manager-card-copy p{font-size:14px;line-height:1.75;margin:11px 0 18px}.manager-contact-links{grid-template-columns:1fr;gap:9px}.manager-card-copy .manager-contact{min-height:68px;padding:10px 13px}.manager-contact-copy bdi{font-size:17px}}
 .jar-label{min-height:47px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3px 2px;overflow:hidden}
 .jar-label span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;font-size:10px;line-height:1.15}
 .jar-label small{font-size:8px}

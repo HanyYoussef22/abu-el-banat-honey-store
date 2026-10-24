@@ -21,7 +21,8 @@ test("honey storefront uses the brand logo fallback and offers both manager cont
     read("src/honey.tsx"), read("google-apps-script/HoneyManager.html"), read("HONEY_STORE_SETUP_AR.md"),
   ]);
   assert.match(ui, /brandLogo = logoUrl \|\| brandLogoFallback/);
-  assert.match(ui, /استفسارات الخاصة بالإنجاب والعلاقة الزوجية والأنوثة، بسرية وراحة ودون حرج/);
+  assert.match(ui, /خلطات العلاقة الزوجية والإنجاب والأنوثة، أ\/ سجود متاحة للحديث بخصوصية وراحة ودون حرج/);
+  assert.match(ui, /<bdi dir="ltr">\{phoneText\(managerWhatsApp\)\}<\/bdi>/);
   assert.match(ui, /واتساب أ\/ سجود/);
   assert.match(ui, /واتساب أ\/ وائل سليم/);
   assert.match(admin, /مثال: براند أبو البنات/);

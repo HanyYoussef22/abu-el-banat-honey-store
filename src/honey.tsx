@@ -187,6 +187,8 @@ function Store() {
   async function checkout(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!cartItems.length || submitting) return;
+    // React releases currentTarget after the first await; capture the form values now.
+    const fields = Object.fromEntries(new FormData(event.currentTarget).entries());
     setSubmitting(true);
     try {
       const fresh = honeySheetConfigured ? await loadHoneyCatalog() : honeyDemo;
@@ -200,7 +202,6 @@ function Store() {
       if (subtotal < fresh.settings.minimum_order) throw new Error(`الحد الأدنى للطلب ${money(fresh.settings.minimum_order, fresh.settings.currency)}`);
       if (orderType === "delivery" && !fresh.settings.delivery_enabled || orderType === "pickup" && !fresh.settings.pickup_enabled) throw new Error("طريقة الاستلام المختارة غير متاحة الآن");
       if (honeySheetConfigured && fresh.settings.delivery_fee !== catalog.settings.delivery_fee) { setCatalog(fresh); throw new Error("تغيرت رسوم التوصيل. راجع الإجمالي ثم أعد المحاولة"); }
-      const fields = Object.fromEntries(new FormData(event.currentTarget).entries());
       const lines = cartItems.map(({ product, quantity }) => `• ${product.name} × ${quantity} — ${money(product.price * quantity, fresh.settings.currency)}`);
       const message = [
         `طلب جديد من ${fresh.settings.restaurant_name}`,

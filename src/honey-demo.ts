@@ -23,8 +23,12 @@ const items: Array<[string, string, string, number, number, string]> = [
   ["black-seed-honey", "honey", "عسل جبلي حبة البركة", 0, 0, "السعر والتفاصيل عند التواصل"],
 ];
 
+const namesToReview = new Set([
+  "catalog-brand", "catalog-products", "catalog-abu-albanat", "catalog-beautiful",
+  "catalog-natural", "catalog-400", "catalog-apiary",
+]);
 const products: Product[] = items.map(([id, category_id, name, price, compare_at_price, description], index) => ({
-  id, category_id, name, price, compare_at_price, description, image_url: "", available: true,
+  id, category_id, name, price, compare_at_price, description, image_url: "", available: !namesToReview.has(id),
   sort_order: index + 1, featured: index < 3,
 }));
 

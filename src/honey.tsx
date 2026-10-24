@@ -5,7 +5,6 @@ import { buildWhatsAppUrl, money, safeImage, type Menu, type Product } from "./d
 import { honeySheetConfigured, loadHoneyCatalog, savedHoneyCatalog } from "./honey-sheet";
 import { honeyDemo } from "./honey-demo";
 import managerPhoto from "./assets/marketing-manager.webp";
-import beeProductsPhoto from "./assets/bee-products.webp";
 import heroBeeProducts from "./assets/honey-hero-wide.png";
 import heroOwnerPromo from "./assets/owner-hero-wide.png";
 import heroHoneyDefault from "./assets/honey-hero.webp";
@@ -22,7 +21,8 @@ const managerWhatsApp = "201223354517";
 const heroSlides = [
   { src: heroBeeProducts, alt: "منتجات العسل والنحل من براند أبو البنات", kicker: "من الطبيعة إلى بيتك", title: "حلاوة الطبيعة", accent: "في كل معلقة", description: "اكتشف أنواع العسل ومنتجات الخلية والخلطات الطبيعية من براند أبو البنات.", action: "تسوق المنتجات", category: "all" },
   { src: couplesHero, alt: "عبوة خلطة المتزوجين من براند أبو البنات", kicker: "اختيارات للمتزوجين", title: "خلطة المتزوجين", accent: "من براند أبو البنات", description: "تعرّف على مكونات الخلطة وتفاصيلها، وتواصل بسرية للاستفسار قبل الطلب.", action: "استفسر عن الخلطة", category: "mixes" },
-  { src: heroOwnerPromo, alt: "وائل سليم يقدم العسل من قلب المنحل", kicker: "خبرة من قلب المنحل", title: "وائل سليم", accent: "حكاية عسل وخبرة", description: "نحّال وتاجر، درس دبلومة مصل النحل والطب الصيني والشمولي، ويحضّر خلطات العسل الطبيعية.", action: "اعرف قصتنا", category: "about" },
+  { src: heroOwnerPromo, alt: "وائل سليم يقدم العسل من قلب المنحل", kicker: "خبرة من قلب المنحل", title: "وائل سليم", accent: "خبير خلطات العسل", description: "نحّال وتاجر، درس دبلومة مصل النحل والطب الصيني والشمولي، ويحضّر خلطات العسل الطبيعية.", action: "اعرف قصتنا", category: "about" },
+  { src: couplesDetails, alt: "عبوة خلطة المتزوجين ومميزات اختيار خلطات العسل", kicker: "اختيارات ليلة الخميس", title: "خلطات العسل", accent: "للمتزوجين", description: "من خبرة وائل سليم في منتجات الخلية وتحضير خلطات العسل.", action: "تصفح الاختيارات", category: "thursday" },
 ];
 function managerLink(message: string) { return buildWhatsAppUrl(managerWhatsApp, message); }
 function phoneText(value: string) { const digits = value.replace(/\D/g, ""); return digits.startsWith("20") && digits.length === 12 ? `0${digits.slice(2, 4)} ${digits.slice(4, 7)} ${digits.slice(7)}` : `+${digits}`; }
@@ -52,7 +52,8 @@ function ProductVisual({ product }: { product: Product }) {
   const url = imageUrl(product);
   const [failed, setFailed] = useState(false);
   useEffect(() => setFailed(false), [url]);
-  return url && !failed ? <img src={url} alt={product.name} loading="lazy" onError={() => setFailed(true)}/> : <div className="jar-art" aria-hidden="true"><div className="jar-lid"/><div className="jar-neck"/><div className="jar-glass"><div className="jar-shine"/><div className="jar-label"><span>عسل</span><small>طبيعي</small></div></div><span className="jar-shadow"/></div>;
+  const kind: Record<string, string> = { honey: "عسل", mixes: "خلطة", bee: "منتج نحل", sweets: "حلويات", more: "منتج طبيعي" };
+  return url && !failed ? <img src={url} alt={product.name} loading="lazy" onError={() => setFailed(true)}/> : <div className="jar-art" aria-hidden="true"><div className="jar-lid"/><div className="jar-neck"/><div className="jar-glass"><div className="jar-shine"/><div className="jar-label"><span>{product.name}</span><small>{kind[product.category_id] || "منتج طبيعي"}</small></div></div><span className="jar-shadow"/></div>;
 }
 
 function CatalogPrice({ product, currency }: { product: Product; currency: string }) {
@@ -66,6 +67,7 @@ function Store() {
   const [cart, setCart] = useState<Cart>(readCart);
   const [favorites, setFavorites] = useState<string[]>(() => readStorage(favoritesKey, []));
   const [category, setCategory] = useState("all");
+  const [showAllProducts, setShowAllProducts] = useState(false);
   const [query, setQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -111,12 +113,24 @@ function Store() {
   }, [heroPaused, reducedMotion]);
   useEffect(() => { document.body.style.overflow = cartOpen || selected || menuOpen ? "hidden" : ""; return () => { document.body.style.overflow = ""; }; }, [cartOpen, selected, menuOpen]);
 
-  const categories = [...catalog.categories].filter(item => item.visible).sort((a,b) => a.sort_order - b.sort_order);
   const availableProducts = catalog.products.filter(item => item.available);
+  const categories = [...catalog.categories].filter(item => item.visible && (
+    item.id === "offers" && availableProducts.some(product => product.price > 0 && (product.compare_at_price || 0) > product.price) ||
+    item.id === "thursday" && availableProducts.some(product => product.category_id === "mixes") ||
+    availableProducts.some(product => product.category_id === item.id)
+  )).sort((a,b) => a.sort_order - b.sort_order);
   const result = useMemo(() => availableProducts.filter(item =>
     (category === "all" || category === "favorites" && favorites.includes(item.id) || category === "offers" && Boolean(item.compare_at_price && item.compare_at_price > item.price) || category === "thursday" && item.category_id === "mixes" || item.category_id === category) &&
     normalized(`${item.name} ${item.description}`).includes(normalized(query))
-  ).sort((a,b) => a.sort_order - b.sort_order), [catalog, category, favorites, query]);
+  ).sort((a,b) => {
+    if (category === "all" && !query.trim()) {
+      const order: Record<string, number> = { honey: 0, mixes: 1, sweets: 2, bee: 3, more: 4 };
+      const categoryDifference = (order[a.category_id] ?? 5) - (order[b.category_id] ?? 5);
+      if (categoryDifference) return categoryDifference;
+    }
+    return a.sort_order - b.sort_order;
+  }), [catalog, category, favorites, query]);
+  const visibleResult = category === "all" && !query.trim() && !showAllProducts ? result.slice(0, 8) : result;
   const cartItems = Object.entries(cart).map(([id, quantity]) => ({ product: catalog.products.find(item => item.id === id), quantity }))
     .filter((line): line is { product: Product; quantity: number } => Boolean(line.product) && line.quantity > 0);
   const count = cartItems.reduce((sum, line) => sum + line.quantity, 0);
@@ -143,7 +157,7 @@ function Store() {
   }
 
   function chooseCategory(id: string) {
-    setCategory(id); setMenuOpen(false);
+    setCategory(id); setShowAllProducts(false); setMenuOpen(false);
     requestAnimationFrame(() => document.getElementById("products")?.scrollIntoView({ behavior: "smooth" }));
   }
   function add(product: Product) {
@@ -191,15 +205,6 @@ function Store() {
     finally { setSubmitting(false); }
   }
 
-  function collectionShelf(id: string, title: string, description: string) {
-    const items = availableProducts.filter(product => product.category_id === id).slice(0, 4);
-    if (!items.length) return null;
-    return <section className="section wrap collection-shelf" aria-label={title}>
-      <div className="section-heading"><div><span className="eyebrow">{description}</span><h2>{title}</h2></div><button type="button" onClick={() => chooseCategory(id)}>تصفح القسم <ArrowLeft size={17}/></button></div>
-      <div className="featured-grid">{items.map(product => <button className="featured-card" type="button" key={product.id} onClick={() => setSelected(product)}><span className={`featured-image tone-${product.category_id}`}><ProductVisual product={product}/></span><strong>{product.name}</strong><CatalogPrice product={product} currency={catalog.settings.currency}/></button>)}</div>
-    </section>;
-  }
-
   return <>
     <div className="announcement" id="top"><span className="announcement-motto">اسأل مجرّب ولا تنسى الطبيب</span><span className="announcement-dot" aria-hidden="true">✦</span><span className="announcement-subtitle">عسل طبيعي بطعم أصيل</span></div>
     <header className="site-header">
@@ -210,13 +215,13 @@ function Store() {
         <div className="header-actions"><button className="icon-button search-mobile" type="button" onClick={() => setSearchOpen(value => !value)} aria-label="بحث"><Search size={23}/></button><button className="icon-button" type="button" aria-label="المفضلة" onClick={() => chooseCategory("favorites")}><Heart size={23}/></button><button className="icon-button bag-button" type="button" aria-label={`السلة: ${count} منتجات`} onClick={() => setCartOpen(true)}><ShoppingBag size={23}/>{count > 0 && <b>{count}</b>}</button></div>
       </div>
       {searchOpen && <div className="mobile-search wrap"><Search size={18}/><input autoFocus type="search" placeholder="ابحث عن العسل والمنتجات" value={query} onChange={event => setQuery(event.target.value)}/></div>}
-      <nav className="desktop-nav wrap" aria-label="أقسام المتجر"><button onClick={() => chooseCategory("all")}>الرئيسية</button><button onClick={() => chooseCategory("offers")}>العروض</button><button onClick={() => chooseCategory("honey")}>أنواع العسل</button><button onClick={() => chooseCategory("mixes")}>خلطات المتزوجين</button><button onClick={() => chooseCategory("bee")}>منتجات النحل</button><button onClick={() => chooseCategory("sweets")}>الحلويات</button><button onClick={() => chooseCategory("thursday")}>ليلة الخميس</button><button onClick={() => chooseCategory("more")}>أصناف أخرى</button><a href="#manager">أ/ سجود المعتصم</a></nav>
+      <nav className="desktop-nav wrap" aria-label="أقسام المتجر"><button onClick={() => chooseCategory("all")}>الرئيسية</button><button onClick={() => chooseCategory("honey")}>أنواع العسل</button><button onClick={() => chooseCategory("mixes")}>خلطات المتزوجين</button><button onClick={() => chooseCategory("bee")}>منتجات النحل</button><button onClick={() => chooseCategory("sweets")}>الحلويات</button><button onClick={() => chooseCategory("thursday")}>ليلة الخميس</button><a href="#manager">أ/ سجود المعتصم</a></nav>
     </header>
 
     <main>
       <section className={`hero hero-carousel hero-theme-${heroSlide}`} aria-label="مقدمة المتجر" onMouseEnter={() => setHeroPaused(true)} onMouseLeave={() => setHeroPaused(false)} onFocusCapture={() => setHeroPaused(true)} onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setHeroPaused(false); }}>
         <div className="hero-inner wrap">
-          <div className="hero-copy"><span className="hero-kicker">{heroSlides[heroSlide].kicker}</span><h1>{heroSlides[heroSlide].title}<br/><em>{heroSlides[heroSlide].accent}</em></h1><p>{heroSlides[heroSlide].description}</p><button className="gold-button" type="button" onClick={() => heroSlides[heroSlide].category === "about" ? document.getElementById("about")?.scrollIntoView({ behavior: "smooth" }) : chooseCategory(heroSlides[heroSlide].category)}>{heroSlides[heroSlide].action} <ArrowLeft size={19}/></button><div className="hero-qualities"><span><BadgeCheck size={18}/>جودة مختارة</span><span><Leaf size={18}/>مكونات طبيعية</span></div></div>
+          <div className="hero-copy"><span className="hero-kicker">{heroSlides[heroSlide].kicker}</span><h1>{heroSlides[heroSlide].title}<br/><em>{heroSlides[heroSlide].accent}</em></h1><p>{heroSlides[heroSlide].description}</p>{heroSlide === 3 && <ul className="hero-feature-list"><li>مكونات من منتجات الخلية</li><li>تحضير بعناية</li><li>تفاصيل واضحة قبل الطلب</li><li>تواصل خاص للسيدات مع أ/ سجود</li></ul>}<button className="gold-button" type="button" onClick={() => heroSlides[heroSlide].category === "about" ? document.getElementById("about")?.scrollIntoView({ behavior: "smooth" }) : chooseCategory(heroSlides[heroSlide].category)}>{heroSlides[heroSlide].action} <ArrowLeft size={19}/></button>{heroSlide !== 3 && <div className="hero-qualities"><span><BadgeCheck size={18}/>جودة مختارة</span><span><Leaf size={18}/>مكونات طبيعية</span></div>}</div>
           <div className="hero-carousel-visual">
             <div className="hero-slide-frame"><div className="hero-photo-canvas"><img key={heroSlide} className="hero-slide-image" src={currentHeroImage} alt={heroSlides[heroSlide].alt} onError={event => { event.currentTarget.src = heroHoneyDefault; }}/></div></div>
             <div className="hero-carousel-controls" aria-label="التحكم في صور المقدمة"><button type="button" aria-label="الصورة التالية" onClick={() => setHero(heroSlide + 1)}><ChevronRight size={18}/></button><div className="hero-dots" role="group" aria-label="اختر صورة المقدمة">{heroSlides.map((slide, index) => <button key={slide.src} type="button" className={index === heroSlide ? "active" : ""} aria-label={`الصورة ${index + 1} من ${heroSlides.length}`} aria-current={index === heroSlide ? "true" : undefined} onClick={() => setHero(index)}/>)}</div><button type="button" aria-label="الصورة السابقة" onClick={() => setHero(heroSlide - 1)}><ChevronLeft size={18}/></button><span className="sr-only" aria-live="polite">الصورة {heroSlide + 1} من {heroSlides.length}</span></div>
@@ -224,35 +229,21 @@ function Store() {
         </div>
       </section>
 
-      <section className="section wrap featured-offers"><div className="section-heading centered"><div><span className="eyebrow">عروض مختارة خصيصًا لك</span><h2>العروض</h2></div></div><div className="featured-grid">{(availableProducts.filter(product => Boolean(product.compare_at_price && product.compare_at_price > product.price)).slice(0, 4).length ? availableProducts.filter(product => Boolean(product.compare_at_price && product.compare_at_price > product.price)).slice(0, 4) : availableProducts.slice(0, 4)).map(product => <button className="featured-card" type="button" key={product.id} onClick={() => setSelected(product)}><span className={`featured-image tone-${product.category_id}`}><ProductVisual product={product}/></span><strong>{product.name}</strong><CatalogPrice product={product} currency={catalog.settings.currency}/></button>)}</div></section>
-
       <section className="section wrap category-section"><div className="section-heading"><div><span className="eyebrow">اكتشف مجموعتنا</span><h2>تسوق حسب القسم</h2></div></div><div className="category-grid">{categories.map((item, index) => <button className={`category-tile tile-${index % 5}`} key={item.id} type="button" onClick={() => chooseCategory(item.id)}><span className="category-symbol">{["✦", "⬡", "◈", "❀", "✧"][index % 5]}</span><strong>{item.name}</strong><small>{item.description}</small><ChevronLeft size={19}/></button>)}</div></section>
-
-      {collectionShelf("honey", "أنواع العسل", "من خير المناحل")}
-
-      <section className="couples-showcase wrap" aria-label="مميزات خلطات العسل للمتزوجين">
-        <img src={couplesDetails} alt="عبوة خلطة المتزوجين في تصميم ذهبي مع رموز النحل والطبيعة والتواصل" loading="lazy"/>
-        <div className="couples-showcase-copy"><span>اختيارات ليلة الخميس</span><h2>خلطات العسل للمتزوجين</h2><p>من خبرة وائل سليم في منتجات الخلية وتحضير خلطات العسل.</p><ul><li>مكونات من منتجات الخلية</li><li>تحضير بعناية</li><li>تفاصيل واضحة قبل الطلب</li><li>تواصل خاص للسيدات مع أ/ سجود</li></ul><button type="button" onClick={() => chooseCategory("thursday")}>تصفح الاختيارات <ArrowLeft size={17}/></button></div>
-      </section>
-
-      <section className="specialty wrap" aria-label="خلطات المتزوجين والتواصل المباشر">
-        <div className="specialty-product"><img src={beeProductsPhoto} alt="مجموعة من العسل ومنتجات النحل المعروضة"/><div><span className="eyebrow">قسم مميز</span><h2>خلطات المتزوجين والعلاقة الزوجية</h2><p>للاستفسار عن الخلطات والمكونات المتعلقة بالعلاقة الزوجية والإنجاب، اسأل عن التفاصيل والسعر قبل الطلب.</p><button type="button" onClick={() => chooseCategory("mixes")}>استكشف القسم <ArrowLeft size={17}/></button></div></div>
+      <section className="specialty wrap" aria-label="التواصل مع مديرة التسويق">
         <div className="manager-card" id="manager"><img src={managerPhoto} alt="مديرة التسويق أ/ سجود المعتصم"/><div className="manager-card-copy"><span className="eyebrow">تواصل مباشر للسيدات</span><h2>أ/ سجود المعتصم</h2><strong>مديرة التسويق</strong><p>أ/ سجود المعتصم متاحة للتواصل مع السيدات في الاستفسارات الخاصة بالإنجاب والعلاقة الزوجية والأنوثة، بسرية وراحة ودون حرج. ويمكنكِ أيضًا التواصل مباشرة مع أ/ وائل سليم.</p><div className="manager-contact-links"><a href={managerLink("مرحبًا أ/ سجود، أود الاستفسار بسرية عن منتجات براند أبو البنات.")} target="_blank" rel="noopener noreferrer"><MessageCircle size={18}/> واتساب أ/ سجود: {phoneText(managerWhatsApp)}</a><a href={buildWhatsAppUrl(storePhone, "مرحبًا أ/ وائل سليم، أود التواصل بخصوص براند أبو البنات.")} target="_blank" rel="noopener noreferrer"><MessageCircle size={18}/> واتساب أ/ وائل سليم: {phoneText(storePhone)}</a></div></div></div>
       </section>
-
-      {collectionShelf("mixes", "خلطات المتزوجين", "تعرف على منتجات القسم")}
-      {collectionShelf("bee", "منتجات النحل", "اختيارات من قلب الخلية")}
 
       <div className="benefits wrap"><div><Truck size={24}/><span><strong>توصيل مريح</strong><small>يصلك الطلب لباب البيت</small></span></div><div><ShieldCheck size={24}/><span><strong>جودة نثق بها</strong><small>اختيارات بعناية</small></span></div><div><Leaf size={24}/><span><strong>من خير الطبيعة</strong><small>عسل ومنتجات النحل</small></span></div></div>
 
       <section className="section wrap products-section" id="products">
         <div className="section-heading"><div><span className="eyebrow">تشكيلة مختارة</span><h2>{category === "all" ? "منتجاتنا" : category === "favorites" ? "مفضلتك" : categories.find(item => item.id === category)?.name || "منتجاتنا"}</h2></div><p>{category === "all" ? "تصفح العسل والخلطات ومنتجات النحل" : `${result.length} منتج`}</p></div>
         <div className="filter-row"><button className={category === "all" ? "active" : ""} onClick={() => setCategory("all")}>الكل</button>{categories.map(item => <button className={category === item.id ? "active" : ""} key={item.id} onClick={() => setCategory(item.id)}>{item.name}</button>)}</div>
-        {error && <div className="store-alert" role="status">{error}</div>}{!honeySheetConfigured && <div className="demo-alert" role="status">المنتجات المسعّرة من كتالوج واتساب، والمنتجات الظاهرة في الصورة المرفقة متاحة للاستفسار. الأسعار والتوافر تُؤكد قبل اعتماد الطلب.</div>}
-        <div className="product-grid">{result.map(product => <article className="product-card" key={product.id}>
+        {error && <div className="store-alert" role="status">{error}</div>}{!honeySheetConfigured && <div className="demo-alert" role="status">الأسعار والتوافر النهائي يُؤكدان مع فريق البراند قبل اعتماد الطلب.</div>}
+        <div className="product-grid">{visibleResult.map(product => <article className="product-card" key={product.id}>
           <div className={`product-image tone-${product.category_id}`}><button className="image-open" type="button" onClick={() => setSelected(product)} aria-label={`تفاصيل ${product.name}`}><ProductVisual product={product}/></button><button className={`favorite ${favorites.includes(product.id) ? "selected" : ""}`} type="button" onClick={() => toggleFavorite(product)} aria-label={`إضافة ${product.name} للمفضلة`}><Heart size={19} fill={favorites.includes(product.id) ? "currentColor" : "none"}/></button>{Boolean(product.price > 0 && product.compare_at_price && product.compare_at_price > product.price) && <span className="card-badge">سعر خاص</span>}</div>
           <div className="product-info"><small>{categories.find(item => item.id === product.category_id)?.name}</small><button type="button" className="product-name" onClick={() => setSelected(product)}>{product.name}</button>{product.description&&<p>{product.description}</p>}<div className="product-buy"><CatalogPrice product={product} currency={catalog.settings.currency}/>{product.price > 0 ? <button type="button" onClick={() => add(product)} aria-label={`إضافة ${product.name} للسلة`}><Plus size={21}/></button> : <a className="inquiry-button" href={inquiryLink(product, `مرحبًا، أود الاستفسار عن ${product.name} والسعر والتوافر.`)} target="_blank" rel="noopener noreferrer" aria-label={`الاستفسار عن ${product.name} عبر واتساب`}><MessageCircle size={18}/></a>}</div></div>
-        </article>)}</div>{result.length === 0 && <div className="empty-results">لا توجد منتجات مطابقة لبحثك.</div>}
+        </article>)}</div>{result.length === 0 && <div className="empty-results">لا توجد منتجات مطابقة لبحثك.</div>}{category === "all" && !query.trim() && result.length > visibleResult.length && <button className="show-all-products" type="button" onClick={() => setShowAllProducts(true)}>عرض باقي المنتجات ({result.length - visibleResult.length}) <ArrowLeft size={18}/></button>}
       </section>
 
       <section className="story" id="about"><div className="wrap story-inner"><div className="story-art"><div className="owner-photo-wrap"><img className="owner-photo" src={waelApiaryPhoto} alt="وائل سليم في المنحل، مؤسس براند أبو البنات"/><span className="owner-photo-caption">وائل سليم <small>نحّال وتاجر</small></span></div><span className="owner-years"><strong>١٣</strong><small>سنة خبرة</small></span></div><div className="story-copy"><span className="eyebrow">حكايتنا مع العسل</span><h2>براند أبو البنات</h2><p>وائل سليم، خبير خلطات العسل ومنتجات الخلية، نحّال وتاجر بخبرة ١٣ عامًا، ودارس ومتخصص في الطب الشمولي والصيني.</p><p>درس دبلومة مصل النحل في الطب الصيني والشمولي، ويشارك خبرته للتعريف بمنتجات الخلية ومكوناتها، مع معلومات واضحة تساعد العملاء على الاختيار.</p><p className="brand-motto">«اسأل مجرّب ولا تنسى الطبيب»</p><button type="button" onClick={() => chooseCategory("honey")}>اكتشف أنواع العسل <ArrowLeft size={19}/></button></div></div></section>

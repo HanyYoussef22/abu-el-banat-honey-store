@@ -89,7 +89,7 @@ export function menuFromRows(parts: { Products: Row[]; Categories: Row[]; Settin
       visible: bool(row.visible) || (str(row.visible) === "" && populatedCategories.has(str(row.id))), sort_order: num(row.sort_order),
     })),
     settings: {
-      restaurant_name: str(settings.restaurant_name) || "براند أبو البنات", restaurant_tagline: str(settings.restaurant_tagline),
+      restaurant_name: str(settings.restaurant_name) || "براند أبو البنات", restaurant_tagline: str(settings.restaurant_tagline) || "اسأل مجرّب ولا تنسى الطبيب",
       logo_url: str(settings.logo_url), cover_image_url: str(settings.cover_image_url), whatsapp_number: str(settings.whatsapp_number),
       currency: str(settings.currency) || "EGP", primary_color: str(settings.primary_color) || "#6D321E",
       secondary_color: str(settings.secondary_color) || "#E9A934", delivery_enabled: bool(settings.delivery_enabled),

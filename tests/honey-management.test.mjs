@@ -28,6 +28,46 @@ test("honey storefront uses the brand logo fallback and offers both manager cont
   assert.match(setup, /كتالوج براند أبو البنات/);
 });
 
+test("honey hero carousel uses wide assets accessibly and keeps sheet cover override", async () => {
+  const [ui, css] = await Promise.all([read("src/honey.tsx"), read("src/honey.css")]);
+  assert.match(ui, /honey-hero-wide\.png/);
+  assert.match(ui, /owner-hero-wide\.png/);
+  assert.match(ui, /couples-hero-wide\.png/);
+  assert.match(ui, /couples-details-wide\.png/);
+  assert.match(ui, /const currentHeroImage = heroSlide === 0 && coverUrl \? coverUrl/);
+  assert.match(ui, /setInterval\(\(\) => setHeroSlide/);
+  assert.match(ui, /onMouseEnter=\{\(\) => setHeroPaused\(true\)\}/);
+  assert.match(ui, /onFocusCapture=\{\(\) => setHeroPaused\(true\)\}/);
+  assert.match(ui, /prefers-reduced-motion: reduce/);
+  assert.match(ui, /aria-label=\{`الصورة \$\{index \+ 1\} من \$\{heroSlides\.length\}`\}/);
+  assert.match(css, /object-fit:cover/);
+  assert.match(css, /\.hero-carousel \.hero-inner:before/);
+  assert.match(ui, /اسأل مجرّب ولا تنسى الطبيب/);
+  assert.match(css, /\.announcement-motto/);
+  assert.match(css, /@media\(prefers-reduced-motion:reduce\)/);
+});
+
+test("prominent Arabic brand copy uses the approved motto and factual owner profile", async () => {
+  const [ui, demo, sheet] = await Promise.all([read("src/honey.tsx"), read("src/honey-demo.ts"), read("src/public-sheet.ts")]);
+  assert.doesNotMatch(ui, /٢٠٠ منتج/);
+  assert.match(ui, /حلاوة الطبيعة/);
+  assert.match(ui, /اسأل مجرّب ولا تنسى الطبيب/);
+  assert.match(ui, /خبير خلطات العسل ومنتجات الخلية/);
+  assert.match(ui, /دارس ومتخصص في الطب الشمولي والصيني/);
+  assert.match(demo, /restaurant_tagline: "اسأل مجرّب ولا تنسى الطبيب"/);
+  assert.match(sheet, /restaurant_tagline: str\(settings\.restaurant_tagline\) \|\| "اسأل مجرّب ولا تنسى الطبيب"/);
+  assert.doesNotMatch(ui, /اسأل مجرب ولا تنسى الطبيب/);
+});
+
+test("public catalog validates saved data and retries transient sheet failures once", async () => {
+  const reader = await read("src/honey-sheet.ts");
+  assert.match(reader, /return validateMenu\(saved\.menu\)/);
+  assert.match(reader, /age >= 0 && age < 24 \* 60 \* 60 \* 1000/);
+  assert.match(reader, /async function requestSheetWithRetry/);
+  assert.match(reader, /await new Promise\(resolve => window\.setTimeout\(resolve, 600\)\)/);
+  assert.match(reader, /requestSheetWithRetry\("Products"\)/);
+});
+
 test("public sheet reader and honey admin share compare and zero-price semantics", async () => {
   const [reader, admin, ui, setup] = await Promise.all([
     read("src/public-sheet.ts"), read("google-apps-script/HoneyManager.gs"),

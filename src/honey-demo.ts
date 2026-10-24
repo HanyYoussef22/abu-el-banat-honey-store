@@ -36,10 +36,11 @@ export const honeyDemo: Menu = {
     { id: "mixes", name: "خلطات المتزوجين", description: "استفسار مباشر عن الخلطات", image_url: "", visible: true, sort_order: 3 },
     { id: "bee", name: "منتجات النحل", description: "غذاء ملكي وحبوب لقاح", image_url: "", visible: true, sort_order: 4 },
     { id: "sweets", name: "الحلويات", description: "مذاق حلو", image_url: "", visible: true, sort_order: 5 },
-    { id: "more", name: "منتجات أخرى", description: "اختيارات إضافية", image_url: "", visible: true, sort_order: 6 },
+    { id: "thursday", name: "اختيارات ليلة الخميس", description: "خلطات للمتزوجين", image_url: "", visible: true, sort_order: 6 },
+    { id: "more", name: "منتجات أخرى", description: "اختيارات إضافية", image_url: "", visible: true, sort_order: 7 },
   ],
   settings: {
-    restaurant_name: "براند أبو البنات", restaurant_tagline: "عسل ومنتجات طبيعية",
+    restaurant_name: "براند أبو البنات", restaurant_tagline: "اسأل مجرّب ولا تنسى الطبيب",
     logo_url: "", cover_image_url: "", whatsapp_number: "201016262423", currency: "EGP",
     primary_color: "#6d321e", secondary_color: "#e9a934",
     delivery_enabled: true, dine_in_enabled: false, pickup_enabled: true,

@@ -24,8 +24,8 @@ const items: Array<[string, string, string, number, number, string]> = [
 ];
 
 const namesToReview = new Set([
-  "catalog-brand", "catalog-products", "catalog-abu-albanat", "catalog-beautiful",
-  "catalog-natural", "catalog-400", "catalog-apiary",
+  "catalog-sweets", "catalog-mixes", "catalog-brand", "catalog-products",
+  "catalog-abu-albanat", "catalog-beautiful", "catalog-natural", "catalog-400", "catalog-apiary",
 ]);
 const products: Product[] = items.map(([id, category_id, name, price, compare_at_price, description], index) => ({
   id, category_id, name, price, compare_at_price, description, image_url: "", available: !namesToReview.has(id),
@@ -40,8 +40,7 @@ export const honeyDemo: Menu = {
     { id: "mixes", name: "خلطات المتزوجين", description: "استفسار مباشر عن الخلطات", image_url: "", visible: true, sort_order: 3 },
     { id: "bee", name: "منتجات النحل", description: "غذاء ملكي وحبوب لقاح", image_url: "", visible: true, sort_order: 4 },
     { id: "sweets", name: "الحلويات", description: "مذاق حلو", image_url: "", visible: true, sort_order: 5 },
-    { id: "thursday", name: "اختيارات ليلة الخميس", description: "خلطات للمتزوجين", image_url: "", visible: true, sort_order: 6 },
-    { id: "more", name: "منتجات أخرى", description: "اختيارات إضافية", image_url: "", visible: true, sort_order: 7 },
+    { id: "more", name: "منتجات أخرى", description: "اختيارات إضافية", image_url: "", visible: true, sort_order: 6 },
   ],
   settings: {
     restaurant_name: "براند أبو البنات", restaurant_tagline: "اسأل مجرّب ولا تنسى الطبيب",

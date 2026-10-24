@@ -28,7 +28,7 @@ jobs:
       - run: npm run build
         env:
           SITE_BASE_PATH: /abu-el-banat-honey-store/
-          VITE_HONEY_SHEET_ID: ${{ vars.VITE_HONEY_SHEET_ID }}
+          VITE_HONEY_SHEET_ID: 1RLijsyZcyxmeiRsrYTTXGbE3Y22bEqdsUDhDr5gGtUM
       - uses: actions/upload-pages-artifact@v4
         with:
           path: dist

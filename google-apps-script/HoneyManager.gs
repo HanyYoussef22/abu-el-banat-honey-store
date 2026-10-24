@@ -1,14 +1,15 @@
 /**
  * إدارة كتالوج براند أبو البنات. هذا ملف مستقل عن PhotoManager.gs.
- * عيّن Script Property HONEY_SPREADSHEET_ID ثم شغّل setupHoneyManager.
+ * شغّل setupHoneyManager من حساب البراند ثم انشر تطبيق الويب.
  * انشر تطبيق الويب للمالك فقط (Execute as: user accessing the web app).
  */
 const HONEY_CONFIG = Object.freeze({ maxBytes: 8 * 1024 * 1024 });
+const HONEY_SPREADSHEET_ID = '1RLijsyZcyxmeiRsrYTTXGbE3Y22bEqdsUDhDr5gGtUM';
 
 function setupHoneyManager() {
   const email = String(Session.getEffectiveUser().getEmail() || '').toLowerCase();
   if (!email) throw new Error('شغّل الإعداد من حساب Google الخاص بمالك الشيت.');
-  const spreadsheetId = PropertiesService.getScriptProperties().getProperty('HONEY_SPREADSHEET_ID');
+  const spreadsheetId = HONEY_SPREADSHEET_ID;
   if (!spreadsheetId || !/^[a-zA-Z0-9_-]{20,150}$/.test(spreadsheetId)) throw new Error('أضف معرف ملف شيت العسل إلى Script Properties باسم HONEY_SPREADSHEET_ID أولًا.');
   const props = PropertiesService.getScriptProperties();
   if (props.getProperty('HONEY_BOUND_SPREADSHEET_ID') && props.getProperty('HONEY_BOUND_SPREADSHEET_ID') !== spreadsheetId)
@@ -25,6 +26,7 @@ function setupHoneyManager() {
     throw new Error('تم إعداد الأداة مسبقًا بحساب مالك مختلف.');
   }
   props.setProperty('HONEY_BOUND_SPREADSHEET_ID', spreadsheetId);
+  props.setProperty('HONEY_SPREADSHEET_ID', spreadsheetId);
   if (!props.getProperty('HONEY_FOLDER_ID')) {
     const folder = DriveApp.createFolder('صور براند أبو البنات - ' + spreadsheet.getName());
     props.setProperty('HONEY_FOLDER_ID', folder.getId());
@@ -34,7 +36,7 @@ function setupHoneyManager() {
 }
 
 function honeySpreadsheet_() {
-  const id = PropertiesService.getScriptProperties().getProperty('HONEY_SPREADSHEET_ID');
+  const id = HONEY_SPREADSHEET_ID;
   if (!id || !/^[a-zA-Z0-9_-]{20,150}$/.test(id)) throw new Error('معرف شيت العسل غير مضبوط. راجع إعداد Script Properties.');
   const boundId = PropertiesService.getScriptProperties().getProperty('HONEY_BOUND_SPREADSHEET_ID');
   if (boundId && id !== boundId) throw new Error('معرف الشيت لا يطابق الملف المرتبط بهذا المدير. أعد الإعداد من نسخة مستقلة عند تغيير الملف.');
@@ -117,8 +119,8 @@ function listProductOptions_() {
 
 function ensureDefaultCategories_() {
   const defaults = [
-    ['offers','العروض'],['honey','أنواع العسل'],['mixes','خلطات المتزوجين'],
-    ['bee','منتجات النحل'],['sweets','الحلويات'],['more','منتجات أخرى'],
+    ['offers','العروض'],['honey','أنواع العسل'],['mixes','خلطات علاجية'],
+    ['bee','منتجات النحل'],['family','الأسرة والأطفال'],['thursday','ليلة الخميس'],
   ];
   const lock = LockService.getScriptLock(); lock.waitLock(15000);
   try {

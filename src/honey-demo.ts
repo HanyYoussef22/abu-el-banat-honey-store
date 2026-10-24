@@ -13,7 +13,7 @@ const items: Array<[string, string, string, number, number, string]> = [
   ["catalog-natural", "more", "منتجات طبيعية", 300, 350, ""],
   ["catalog-400", "more", "٤٠٠", 300, 0, ""],
   ["catalog-apiary", "honey", "براند أبو البنات", 400, 500, ""],
-  ["couples-blend", "mixes", "خلطة أبو البنات للمتزوجين", 0, 0, "التفاصيل والسعر عند التواصل"],
+  ["couples-blend", "thursday", "خلطة أبو البنات للمتزوجين", 0, 0, "التفاصيل والسعر عند التواصل"],
   ["royal-jelly", "bee", "غذاء ملكات النحل", 0, 0, "السعر والتفاصيل عند التواصل"],
   ["propolis", "bee", "بروبوليس", 0, 0, "السعر والتفاصيل عند التواصل"],
   ["bee-pollen", "bee", "حبوب اللقاح", 0, 0, "السعر والتفاصيل عند التواصل"],
@@ -37,10 +37,10 @@ export const honeyDemo: Menu = {
   categories: [
     { id: "offers", name: "العروض", description: "منتجات بسعر خاص", image_url: "", visible: true, sort_order: 1 },
     { id: "honey", name: "أنواع العسل", description: "من خير المناحل", image_url: "", visible: true, sort_order: 2 },
-    { id: "mixes", name: "خلطات المتزوجين", description: "استفسار مباشر عن الخلطات", image_url: "", visible: true, sort_order: 3 },
+    { id: "mixes", name: "خلطات علاجية", description: "تركيبات من منتجات الخلية", image_url: "", visible: true, sort_order: 3 },
     { id: "bee", name: "منتجات النحل", description: "غذاء ملكي وحبوب لقاح", image_url: "", visible: true, sort_order: 4 },
-    { id: "sweets", name: "الحلويات", description: "مذاق حلو", image_url: "", visible: true, sort_order: 5 },
-    { id: "more", name: "منتجات أخرى", description: "اختيارات إضافية", image_url: "", visible: true, sort_order: 6 },
+    { id: "family", name: "الأسرة والأطفال", description: "اختيارات للعائلة", image_url: "", visible: true, sort_order: 5 },
+    { id: "thursday", name: "ليلة الخميس", description: "خلطات المتزوجين", image_url: "", visible: true, sort_order: 6 },
   ],
   settings: {
     restaurant_name: "براند أبو البنات", restaurant_tagline: "اسأل مجرّب ولا تنسى الطبيب",

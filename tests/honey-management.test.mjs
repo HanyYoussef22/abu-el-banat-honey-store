@@ -35,12 +35,18 @@ test("honey hero carousel uses wide assets accessibly and keeps sheet cover over
   assert.match(ui, /owner-hero-wide\.png/);
   assert.match(ui, /couples-hero-wide\.png/);
   assert.match(ui, /couples-details-wide\.png/);
+  assert.match(ui, /family-honey-hero\.png/);
   assert.match(ui, /const currentHeroImage = heroSlide === 0 && coverUrl \? coverUrl/);
-  assert.match(ui, /setInterval\(\(\) => setHeroSlide/);
-  assert.match(ui, /onMouseEnter=\{\(\) => setHeroPaused\(true\)\}/);
+  assert.match(ui, /setInterval\(\(\) => \{ setHeroDirection\("next"\); setHeroSlide/);
+  assert.doesNotMatch(ui, /onMouseEnter=\{\(\) => setHeroPaused\(true\)\}/);
   assert.match(ui, /onFocusCapture=\{\(\) => setHeroPaused\(true\)\}/);
   assert.match(ui, /prefers-reduced-motion: reduce/);
-  assert.match(ui, /aria-label=\{`الصورة \$\{index \+ 1\} من \$\{heroSlides\.length\}`\}/);
+  assert.match(ui, /className="hero-side-controls"/);
+  assert.match(ui, /aria-label="الصورة التالية"/);
+  assert.match(ui, /banner-brand-logo\.png/);
+  assert.match(ui, /className="hero-brand-watermark"/);
+  assert.match(ui, /owner-profile-card\.png/);
+  assert.match(ui, /className="owner-qualification"/);
   assert.match(css, /object-fit:cover/);
   assert.match(css, /\.hero-carousel \.hero-inner:before/);
   assert.match(ui, /اسأل مجرّب ولا تنسى الطبيب/);
@@ -58,6 +64,18 @@ test("prominent Arabic brand copy uses the approved motto and factual owner prof
   assert.match(demo, /restaurant_tagline: "اسأل مجرّب ولا تنسى الطبيب"/);
   assert.match(sheet, /restaurant_tagline: str\(settings\.restaurant_tagline\) \|\| "اسأل مجرّب ولا تنسى الطبيب"/);
   assert.doesNotMatch(ui, /اسأل مجرب ولا تنسى الطبيب/);
+});
+
+test("six storefront sections match the sheet and mobile uses horizontal scrolling", async () => {
+  const [ui, demo, css, admin] = await Promise.all([read("src/honey.tsx"), read("src/honey-demo.ts"), read("src/honey.css"), read("google-apps-script/HoneyManager.gs")]);
+  for (const label of ["العروض", "أنواع العسل", "خلطات علاجية", "منتجات النحل", "الأسرة والأطفال", "ليلة الخميس"]) {
+    assert.ok(ui.includes(label));
+    assert.ok(demo.includes(label));
+    assert.ok(admin.includes(label));
+  }
+  assert.match(ui, /storefrontCategory\(product\)/);
+  assert.match(css, /\.category-grid\{display:flex;gap:14px;overflow-x:auto/);
+  assert.doesNotMatch(ui, /<strong>ليلة الخميس<\/strong>/);
 });
 
 test("public catalog validates saved data and retries transient sheet failures once", async () => {

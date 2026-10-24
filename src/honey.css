@@ -206,6 +206,12 @@
 .manager-contact>svg:last-child{flex:none;opacity:.75}
 @media(max-width:900px){.manager-card{grid-template-columns:38% minmax(0,1fr)}.manager-contact-links{grid-template-columns:1fr}.manager-card-copy .manager-contact{min-height:66px}}
 @media(max-width:700px){.manager-card{display:flex;flex-direction:column;min-height:0}.manager-card>img{width:100%;height:255px;min-height:0;object-position:center 31%}.manager-card-copy{padding:24px 20px 26px}.manager-card-copy h2{font-size:30px}.manager-card-copy p{font-size:14px;line-height:1.75;margin:11px 0 18px}.manager-contact-links{grid-template-columns:1fr;gap:9px}.manager-card-copy .manager-contact{min-height:68px;padding:10px 13px}.manager-contact-copy bdi{font-size:17px}}
+.story-art .owner-years{width:88px;height:88px;padding:3px;border:2px solid #e7bd68;background:#fff;box-shadow:0 8px 22px #49321b35}
+.owner-years>img{width:100%;height:100%;display:block;object-fit:cover;border-radius:50%}
+.owner-years-caption{position:absolute;bottom:-15px;left:50%;transform:translateX(-50%);display:flex;align-items:center;justify-content:center;gap:4px;min-width:91px;min-height:27px;padding:3px 8px;border-radius:20px;background:#6a3522;color:#fff;box-shadow:0 3px 10px #49271238;white-space:nowrap}
+.owner-years .owner-years-caption strong{font-size:17px;line-height:1}
+.owner-years .owner-years-caption small{font-size:10px;line-height:1;font-weight:800}
+@media(max-width:700px){.story-art .owner-years{width:72px;height:72px}.owner-years-caption{min-width:82px;min-height:24px;bottom:-13px}.owner-years .owner-years-caption strong{font-size:15px}.owner-years .owner-years-caption small{font-size:9px}}
 .jar-label{min-height:47px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3px 2px;overflow:hidden}
 .jar-label span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;font-size:10px;line-height:1.15}
 .jar-label small{font-size:8px}

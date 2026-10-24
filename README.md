@@ -18,4 +18,4 @@ npm test
 npm run build
 ```
 
-للنشر على GitHub Pages، يحدد workflow المسار `/abu-el-banat-honey-store/`. أضف متغير المستودع `VITE_HONEY_SHEET_ID` عند إعداد Google Sheet. لإعداد الشيت ولوحة المالك راجع [دليل المتجر](HONEY_STORE_SETUP_AR.md).
+ينشر GitHub Actions الموقع على المسار `/abu-el-banat-honey-store/`، ويضبط معرّف شيت البراند أثناء البناء. الطلبات تنتقل مباشرة إلى واتساب بعد فحص السعر والتوافر، وتُحدد رسوم التوصيل هناك. لإدارة المنتجات والصور والأقسام راجع [دليل المتجر](HONEY_STORE_SETUP_AR.md).

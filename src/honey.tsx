@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { ArrowLeft, BadgeCheck, ChevronLeft, ChevronRight, Heart, Leaf, Menu as MenuIcon, MessageCircle, Minus, Plus, Search, ShieldCheck, ShoppingBag, Truck, X } from "lucide-react";
 import { buildWhatsAppUrl, money, safeImage, type Menu, type Product } from "./domain";
+import { displayCategories, productMatchesCategory, storefrontCategory } from "./catalog-view";
 import { honeySheetConfigured, loadHoneyCatalog, savedHoneyCatalog } from "./honey-sheet";
 import { honeyDemo } from "./honey-demo";
 import managerPhoto from "./assets/marketing-manager.webp";
@@ -20,19 +21,6 @@ type Cart = Record<string, number>;
 const cartKey = "honey-store-cart-v1";
 const favoritesKey = "honey-store-favorites-v1";
 const managerWhatsApp = "201223354517";
-const storefrontCategories = [
-  { id: "offers", name: "العروض", description: "أسعار مميزة", symbol: "✦" },
-  { id: "honey", name: "أنواع العسل", description: "من خير المناحل", symbol: "⬡" },
-  { id: "mixes", name: "خلطات علاجية", description: "تركيبات من منتجات الخلية", symbol: "◈" },
-  { id: "bee", name: "منتجات النحل", description: "غذاء ملكي وحبوب لقاح", symbol: "❀" },
-  { id: "family", name: "الأسرة والأطفال", description: "اختيارات للعائلة", symbol: "♡" },
-  { id: "thursday", name: "ليلة الخميس", description: "خلطات المتزوجين", symbol: "✧" },
-] as const;
-function storefrontCategory(product: Product): string | null {
-  if (product.category_id === "thursday" || product.category_id === "sweets" || product.category_id === "mixes" && /المتزوجين|ليلة الخميس/.test(product.name)) return "thursday";
-  if (["honey", "mixes", "bee", "family"].includes(product.category_id)) return product.category_id;
-  return null;
-}
 const heroSlides = [
   { src: heroBeeProducts, alt: "منتجات العسل والنحل من براند أبو البنات", kicker: "من الطبيعة إلى بيتك", title: "حلاوة الطبيعة", accent: "في كل معلقة", description: "اكتشف أنواع العسل ومنتجات الخلية والخلطات الطبيعية من براند أبو البنات.", action: "تسوق المنتجات", category: "all" },
   { src: couplesHero, alt: "عبوة خلطة المتزوجين من براند أبو البنات", kicker: "اختيارات للمتزوجين", title: "خلطة المتزوجين", accent: "من براند أبو البنات", description: "تعرّف على مكونات الخلطة وتفاصيلها، وتواصل بسرية للاستفسار قبل الطلب.", action: "استفسر عن الخلطة", category: "thursday" },
@@ -128,15 +116,15 @@ function Store() {
   }, [heroPaused, reducedMotion]);
   useEffect(() => { document.body.style.overflow = cartOpen || selected || menuOpen ? "hidden" : ""; return () => { document.body.style.overflow = ""; }; }, [cartOpen, selected, menuOpen]);
 
-  const availableProducts = catalog.products.filter(item => item.available && storefrontCategory(item));
-  const categories = storefrontCategories;
+  const categories = displayCategories(catalog.categories);
+  const categoryOrder = Object.fromEntries(categories.map((item, index) => [item.id, index]));
+  const availableProducts = catalog.products.filter(item => item.available);
   const result = useMemo(() => availableProducts.filter(item =>
-    (category === "all" || category === "favorites" && favorites.includes(item.id) || category === "offers" && Boolean(item.price > 0 && item.compare_at_price && item.compare_at_price > item.price) || storefrontCategory(item) === category) &&
+    (category === "all" || category === "favorites" && favorites.includes(item.id) || productMatchesCategory(item, category)) &&
     normalized(`${item.name} ${item.description}`).includes(normalized(query))
   ).sort((a,b) => {
     if (category === "all" && !query.trim()) {
-      const order: Record<string, number> = { honey: 0, mixes: 1, bee: 2, family: 3, thursday: 4 };
-      const categoryDifference = (order[storefrontCategory(a) || ""] ?? 5) - (order[storefrontCategory(b) || ""] ?? 5);
+      const categoryDifference = (categoryOrder[storefrontCategory(a)] ?? categories.length) - (categoryOrder[storefrontCategory(b)] ?? categories.length);
       if (categoryDifference) return categoryDifference;
     }
     return a.sort_order - b.sort_order;

@@ -70,10 +70,10 @@ test("prominent Arabic brand copy uses the approved motto and factual owner prof
 test("six storefront sections match the sheet and mobile uses horizontal scrolling", async () => {
   const [ui, demo, css, admin] = await Promise.all([read("src/honey.tsx"), read("src/honey-demo.ts"), read("src/honey.css"), read("google-apps-script/HoneyManager.gs")]);
   for (const label of ["العروض", "أنواع العسل", "خلطات علاجية", "منتجات النحل", "الأسرة والأطفال", "ليلة الخميس"]) {
-    assert.ok(ui.includes(label));
     assert.ok(demo.includes(label));
     assert.ok(admin.includes(label));
   }
+  assert.match(ui, /displayCategories\(catalog\.categories\)/);
   assert.match(ui, /storefrontCategory\(product\)/);
   assert.match(css, /\.category-grid\{display:flex;gap:14px;overflow-x:auto/);
   assert.doesNotMatch(ui, /<strong>ليلة الخميس<\/strong>/);
